@@ -8,6 +8,9 @@ Control a [Xiaomi My Computer Light Bar](https://www.mi.com/global/product/mi-co
 > - Device number MJGJD02YL. It uses a ESP32, wifi and BTLE, and requires a phone app to pair. See 
 > [here](https://karlquinsland.com/xaomi-s1-monitor-lamp-teardown-and-tasmota) for many details.
 
+This library is inspired and based by [this thread](https://community.home-assistant.io/t/xiaomi-monitor-light-bar/298796/4) from the Home Assistant community forum. 
+My objective is to control the light bar from a Raspberry Pi where Home Assistant is already running.
+
 # Requirements
 
 - Xiaomi My Computer Light Bar, model MJGJD01YL.
@@ -61,18 +64,26 @@ bar.on_off()
 ```
 Notice that there is no on or off command, since both are the same for the original controller.
 
+The id of the remote can be extracted using the [script](scripts/scan_lightbar_remote.py) provided in the scripts folder.
+
 The library uses an internal counter that is incremented on each call, required by the bar to
 reject repeated consecutive packets (the radio interface has a lot of redundancy). You can use your
-own counter (0 to 255), but if you repeat the same value twice or more it will only work the first
-time.
+own counter (0 to 255) as a named argument, but if you repeat the same value twice or more it will
+only work the first time.
 ```python
-bar.on_off(14)  # it works
-bar.on_off(15)  # it works
-bar.on_off(14)  # it works
-bar.on_off(14)  # No, repeated
+bar.on_off(counter=14)  # it works
+bar.on_off(counter=15)  # it works
+bar.on_off(counter=14)  # it works
+bar.on_off(counter=14)  # No, repeated
 ```
 
-The full list of commands is 
+The light bar remote has six operations:
+- On/off, pressing the knob.
+- Higher and lower light intensity, turning the knob.
+- Colder and warmer light color, pressing and turning the knob.
+- Reset to medium intensity and warm color, long-pressing the knob.
+
+Therefore, the full list of commands is 
 ```python
 bar.on_off()  # Turn on or off
 bar.colder()  # Colder/bluer color
@@ -80,6 +91,15 @@ bar.warmer()  # Warmer/yellower color
 bar.higher()  # Higher intensity
 bar.lower()   # Lower intensity
 bar.reset()   # Reset, medium intensity, warm color
+```
+The four turning operations also register the speed. The four corresponding commands accept one optional numerical parameter, 
+1 to 15, that represent the change in one step. The default value is 1, while 15 is crossing the full range of intensity 
+or color temperature in just one operation.
+```python
+bar.colder(15)
+bar.warmer(3)
+bar.higher(5)
+bar.lower(4)
 ```
 
 # Background
