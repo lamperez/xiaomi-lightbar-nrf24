@@ -47,7 +47,7 @@ packages:
 
 ```
 
-# Use
+# Usage
 
 Assuming that pins are `ce_pin=25` and `csn_pin=0` and the id of the remote is `0xABCDEF` (3 byte
 long), start with
@@ -181,4 +181,4 @@ checksum should be the same in all cases.
 
 # Signal generation with the nRF24L01(+)
 
-TODO
+**TODO**
