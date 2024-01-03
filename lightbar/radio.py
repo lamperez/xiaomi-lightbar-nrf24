@@ -1,7 +1,6 @@
 import time
 import pyrf24
 from . import baseband
-import functools
 
 # https://nrf24.github.io/RF24/
 # https://pyrf24.readthedocs.io/en/latest/rf24_api.html
@@ -10,6 +9,7 @@ import functools
 def clamp(x: int):
     """Clamp value to [0, 15]"""
     return min(max(x, 0), 15)
+
 
 class Lightbar:
     """Implements a Xiaomi light bar controller with a nRF24L01 module"""
@@ -54,39 +54,35 @@ class Lightbar:
         self.send(0x0600, counter)
 
     def cooler(self, step: int = 1, counter: int = None):
-        step = clamp(step)
-        self.send(0x0200 + step, counter)
+        self.send(0x0200 + clamp(step), counter)
 
     def warmer(self, step: int = 1, counter: int = None):
-        step = clamp(step)
-        self.send(0x0300 - step, counter)
+        self.send(0x0300 - clamp(step), counter)
 
     def higher(self, step: int = 1, counter: int = None):
-        step = clamp(step)
-        self.send(0x0400 + step, counter)
+        self.send(0x0400 + clamp(step), counter)
 
     def lower(self, step: int = 1, counter: int = None):
-        step = clamp(step)
-        self.send(0x0500 - step, counter)
+        self.send(0x0500 - clamp(step), counter)
 
-    def set_intensity(self, intensity: int, counter: int = None):
-        """Set the intensity (≤0 lowest, ≥15 highest)"""
+    def intensity(self, intensity: int, counter: int = None):
+        """Set the intensity (≤0 lowest, ≥15 highest 270 lm)"""
 
-        intensity = clamp(intensity)
-        if intensity < 8:  # Full scale lowest, then adjust
-            self.lower(15)
-            self.higher(intensity)
-        else:              # Full scale highest, then adjust
-            self.higher(15)
-            self.lower(15-intensity)
+        # Beware, counter increases by two, two operations
+        counter2 = None if counter is None else counter+1
 
-    def set_color(self, color: int, counter: int = None):
-        """Set the color (≤0 warmest, ≥15 coolest)"""
+        # Saturate lowest sending an out-of-range step >15.
+        # This delays the change until next update! Then adjust.
+        self.send(0x0500-16, counter)
+        self.higher(intensity, counter2)
 
-        color = clamp(color)
-        if color < 8:  # Full scale warmest, then adjust
-            self.warmer(15)
-            self.cooler(color)
-        else:          # Full scale coolest, then adjust
-            self.cooler(15)
-            self.warmer(15-color)
+    def color(self, color: int, counter: int = None):
+        """Set the color (≤0 warmest 2700K, ≥15 coolest 6500K)"""
+
+        # Beware, counter increases by two, two operations
+        counter2 = None if counter is None else counter+1
+
+        # Saturate warmest sending an out-of-range step >15.
+        # This delays the change until next update! Then adjust.
+        self.send(0x0300-16, counter)
+        self.cooler(color, counter2)

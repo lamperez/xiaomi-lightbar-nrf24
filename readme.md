@@ -102,6 +102,18 @@ bar.higher(5)
 bar.lower(4)
 ```
 
+Alternatively, the absolute value of intensity (0 lowest, 15 highest) can be set with
+```python
+bar.intensity(4)   # Medium-low
+bar.intensity(13)  # Rather high
+```
+And in a similar way, for the absolute value of color (0 warmest, 15 coldest)
+```python
+bar.color(0)   # Warm white, 2700 K
+bar.color(8)   # Intermediate, cool white
+bar.color(15)  # Day light, 6500 K
+```
+
 # Background
 
 If you are interested in the gory details of the radio and baseband used by the light bar, keep reading.
@@ -111,7 +123,7 @@ If you are interested in the gory details of the radio and baseband used by the 
 I have analized the radio signals from the remote using a [HackRF
 One](https://greatscottgadgets.com/hackrf/one/) SDR, with [Universal Radio
 Hacker](https://github.com/jopohl/urh). The chipset included in the remote and the light bar
-(Telink TLSR8368 or simmilar) are common in wireless mice and keyboards. Only the remote acts as a
+(Telink TLSR8368 or similar) are common in wireless mice and keyboards. Only the remote acts as a
 transmitter, the light bar is just a receiver. Therefore, you can think of the remote as a wireless
 mouse (with clicks and wheels), while the bar is like the receiver you plug in a USB port, with no
 data transmission to any USB host.
@@ -174,9 +186,12 @@ The command codes that work are the ones in the following table:
 
 - Steps is a number from 1 to 15. 
 - Default is the code sent by the original control.
+- Wrong codes (e.g. `0x0800`) are silently ignored.
 - The intensity and color scales are 0 to 15.
-- Steps out of [1, 15] may temporarily block the control.
-- Wrong codes are silently ignored
+- Steps higher than 15 saturate the intensity or color, but they are not immediately
+  applied. Instead, they wait for the next update. This can be used to fix an absolute
+  value of intensity or color, without flicker.
+
 
 ## CRC checksum
 
