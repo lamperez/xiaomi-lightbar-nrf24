@@ -7,7 +7,7 @@ setup(name='xiaomi_lightbar_nrf24',
       author='Alejandro García Lampérez',
       author_email='dr.lamperez@gmail.com',
       license='GPLv3',
-      packages=['xiaomi_lightbar_nrf24'],
+      packages=['lightbar'],
       install_requires=[
           'pyrf24',
           'crc',
