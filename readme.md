@@ -1,11 +1,12 @@
 Control a [Xiaomi My Computer Light Bar](https://www.mi.com/global/product/mi-computer-monitor-light-bar/) MJGJD01YL, using a cheap 2.4 GHz radio transceiver module (nRF24L01 or nRF24L01+).
 
-There are two variants of the light bar, both of them controlled by 2.4 GHz radio signals (see the
-label on the bar for the device number).
-- Device number MJGJD01YL. It uses a TLSR8368 radio receiver and a propiertary radio format. This is
-the one that can be used with this library.
-- Device number MJGJD02YL. It uses a ESP32, wifi and BTLE, and requires a phone app to pair. See 
-[here](https://karlquinsland.com/xaomi-s1-monitor-lamp-teardown-and-tasmota) for many details.
+> [!IMPORTANT]
+> There are two variants of the light bar, both of them controlled by 2.4 GHz radio signals (see the
+> label on the bar for the device number).
+> - Device number MJGJD01YL. It uses a TLSR8368 radio receiver and a propiertary radio format. This is
+> the one that can be used with this library.
+> - Device number MJGJD02YL. It uses a ESP32, wifi and BTLE, and requires a phone app to pair. See 
+> [here](https://karlquinsland.com/xaomi-s1-monitor-lamp-teardown-and-tasmota) for many details.
 
 # Requirements
 
@@ -111,7 +112,6 @@ the time):
 The bit rate is 2 Mbps, and therefore the bit length is 0.5 µs. Each pulse contains a packet of 17
 bytes, or 136 bits, equal to 68 µs. The remaining time up to 100 µs corresponds to a synchronization sequence before the bits, to allow the receiver to lock into the signal frequency. I suspect that the wavy shape of the frequency plot during the sync sequence is meant to help the locking process.
 
-
 ## Baseband packet format
 
 A baseband packet (17 bytes) is composed of the following fields
@@ -178,7 +178,8 @@ reveng -w 16 -s 533914DD1C49341201B960FF7901003870 \
 width=16  poly=0x1021  init=0xfffe  refin=false  refout=false  xorout=0x0000
 check=0x6e62 residue=0x0000  name=(none)
 ```
-The validity of the checksum can be tested
+The validity of the checksum can be tested by changing the packets. THe parameters of the CRC
+checksum should be the same in all cases.
 
 # Signal generation with the nRF24L01(+)
 
