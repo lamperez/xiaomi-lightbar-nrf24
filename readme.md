@@ -125,7 +125,7 @@ This structure is compatible with the
 
 Before the packet, a synchronization sequence `0x5555555555` is transmitted (in binary it is just
 `0b010101...` ). Notice that the four first bits in the preamble are
-`0b0101 = 0x55`, they could be considered still part of the sync sequence. Doing so, the preamble
+`0b0101 = 0x5`, they could be considered still part of the sync sequence. Doing so, the preamble
 becames `0x67229ba38926824`. However, this is clearly not a valid approach
 - The `0x67...` preamble is 60 bits long, 7 bytes and a half.
 - The byte alignment of the other packet fields is broken.
