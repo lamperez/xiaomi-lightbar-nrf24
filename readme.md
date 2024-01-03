@@ -55,14 +55,12 @@ long), start with
 from lightbar import Lightbar
 bar = Lightbar(25, 0, 0xABCDEF)
 ```
-Then you can turn on/off in two ways
-```python
-bar.send('on_off')
-```
-or
+Then you can turn on or off:
 ```python
 bar.on_off()
 ```
+Notice that there is no on or off command, since both are the same for the original controller.
+
 The library uses an internal counter that is incremented on each call, required by the bar to
 reject repeated consecutive packets (the radio interface has a lot of redundancy). You can use your
 own counter (0 to 255), but if you repeat the same value twice or more it will only work the first
@@ -76,12 +74,12 @@ bar.on_off(14)  # No, repeated
 
 The full list of commands is 
 ```python
-bar.on_off()
-bar.colder()
-bar.warmer()
-bar.stronger()
-bar.softer()
-bar.reset()
+bar.on_off()  # Turn on or off
+bar.colder()  # Colder/bluer color
+bar.warmer()  # Warmer/yellower color
+bar.higher()  # Higher intensity
+bar.lower()   # Lower intensity
+bar.reset()   # Reset, medium intensity, warm color
 ```
 
 # Background
