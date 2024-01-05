@@ -47,6 +47,10 @@ class Lightbar:
             self.radio.write(pkt)
             time.sleep(self.delay_s)
 
+    @property
+    def is_available(self):
+        return self.radio.is_chip_connected
+
     def on_off(self, counter: int = None):
         self.send(0x0100, counter)
 
