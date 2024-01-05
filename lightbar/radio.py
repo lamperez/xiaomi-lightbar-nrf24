@@ -69,8 +69,8 @@ class Lightbar:
     def lower(self, step: int = 1, counter: int = None):
         self.send(0x0500 - clamp(step), counter)
 
-    def intensity(self, intensity: int, counter: int = None):
-        """Set the intensity (≤0 lowest, ≥15 highest 270 lm)"""
+    def brightness(self, value: int, counter: int = None):
+        """Set the brightness (≤0 lowest, ≥15 highest 270 lm)"""
 
         # Beware, counter increases by two, two operations
         counter2 = None if counter is None else counter+1
@@ -78,10 +78,10 @@ class Lightbar:
         # Saturate lowest sending an out-of-range step >15.
         # This delays the change until next update! Then adjust.
         self.send(0x0500-16, counter)
-        self.higher(intensity, counter2)
+        self.higher(value, counter2)
 
-    def color(self, color: int, counter: int = None):
-        """Set the color (≤0 warmest 2700K, ≥15 coolest 6500K)"""
+    def color_temp(self, value: int, counter: int = None):
+        """Set the color temperature (≤0 ~2700K, ≥15 ~6500K)"""
 
         # Beware, counter increases by two, two operations
         counter2 = None if counter is None else counter+1
@@ -89,4 +89,4 @@ class Lightbar:
         # Saturate warmest sending an out-of-range step >15.
         # This delays the change until next update! Then adjust.
         self.send(0x0300-16, counter)
-        self.cooler(color, counter2)
+        self.cooler(value, counter2)
