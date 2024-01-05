@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from lightbar import Lightbar
+from xiaomi_lightbar import Lightbar
 import time
 import os
 

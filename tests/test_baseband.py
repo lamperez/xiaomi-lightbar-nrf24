@@ -1,4 +1,4 @@
-from lightbar.baseband import packet
+from xiaomi_lightbar.baseband import packet
 
 x_bytes = packet(id=0xABCDEF, command=0x0100, counter=0x72)
 x = int.from_bytes(x_bytes, "big")

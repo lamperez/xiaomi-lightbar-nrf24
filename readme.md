@@ -55,7 +55,7 @@ packages:
 Assuming that pins are `ce_pin=25` and `csn_pin=0` and the id of the remote is `0xABCDEF` (3 byte
 long), start with
 ```python
-from lightbar import Lightbar
+from xiaomi_lightbar import Lightbar
 bar = Lightbar(25, 0, 0xABCDEF)
 ```
 Then you can turn on or off:
