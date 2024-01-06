@@ -1,0 +1,12 @@
+{
+  "name": "Xiaomi Monitor Light Bar",
+  "domain": "xiaomi_lightbar",
+  "codeowners": [ "@lamperez" ],
+  "config_flow": true,
+  "documentation": "https://github.com/lamperez/xiaomi-lightbar-nrf24",
+  "iot_class": "assumed_state",
+  "version": "0.1.0",
+  "requirements": [
+    "xiaomi_lightbar_nrf24 @git+https://github.com/lamperez/xiaomi-lightbar-nrf24.git"
+  ]
+}

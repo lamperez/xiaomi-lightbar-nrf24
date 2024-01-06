@@ -1,0 +1,21 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Dispositivo ya configurado"
+        },
+        "error": {
+            "cannot_connect": "Error de conexión",
+            "invalid_id": "ID de dispositivo incorrecta",
+            "unknown": "Error desconocido"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "device_id": "ID dispositivo",
+                    "ce_pin": "Pin CE",
+                    "cs_pin": "Pin CS"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "device_id": "[%key:common::config_flow::data::device_id%]",
+          "ce_pin": "[%key:common::config_flow::data::ce_pin%]",
+          "cs_pin": "[%key:common::config_flow::data::cs_pin%]"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_id": "[%key:common::config_flow::error::invalid_id%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+    }
+  }
+}
