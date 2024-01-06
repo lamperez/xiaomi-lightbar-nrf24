@@ -64,7 +64,8 @@ bar.on_off()
 ```
 Notice that there is no on or off command, since both are the same for the original controller.
 
-The id of the remote can be extracted using the [script](scripts/scan_lightbar_remote.py) provided in the scripts folder.
+The id of the remote can be extracted using the [script](scripts/scan_lightbar_remote.py) provided in 
+the `scripts/` folder.
 
 The library uses an internal counter that is incremented on each call, required by the bar to
 reject repeated consecutive packets (the radio interface has a lot of redundancy). You can use your
@@ -79,22 +80,22 @@ bar.on_off(counter=14)  # No, repeated
 
 The light bar remote has six operations:
 - On/off, pressing the knob.
-- Higher and lower light intensity, turning the knob.
-- Colder and warmer light color, pressing and turning the knob.
-- Reset to medium intensity and warm color, long-pressing the knob.
+- Higher and lower light brightness, turning the knob.
+- Colder and warmer color temperature, pressing and turning the knob.
+- Reset to medium brightness and warm color, long-pressing the knob.
 
 Therefore, the full list of commands is 
 ```python
 bar.on_off()  # Turn on or off
 bar.colder()  # Colder/bluer color
 bar.warmer()  # Warmer/yellower color
-bar.higher()  # Higher intensity
-bar.lower()   # Lower intensity
-bar.reset()   # Reset, medium intensity, warm color
+bar.higher()  # Higher brightness
+bar.lower()   # Lower brightness
+bar.reset()   # Reset, medium brightness, warm color
 ```
-The four turning operations also register the speed. The four corresponding commands accept one optional numerical parameter, 
-1 to 15, that represent the change in one step. The default value is 1, while 15 is crossing the full range of intensity 
-or color temperature in just one operation.
+The four turning operations also register the speed of change. Therefore, the four corresponding commands accept one 
+optional numerical parameter, 1 to 15, that represent the change in each operation. The default value is 1, while 15 
+covers the full range of brightness or color temperature in just one operation.
 ```python
 bar.colder(15)
 bar.warmer(3)
@@ -102,16 +103,16 @@ bar.higher(5)
 bar.lower(4)
 ```
 
-Alternatively, the absolute value of intensity (0 lowest, 15 highest) can be set with
+Alternatively, the absolute value of brightness (0 lowest, 15 highest) can be set with
 ```python
-bar.intensity(4)   # Medium-low
-bar.intensity(13)  # Rather high
+bar.brightness(4)   # Medium-low
+bar.brightness(13)  # Rather high
 ```
-And in a similar way, for the absolute value of color (0 warmest, 15 coldest)
+And in a similar way, for the absolute value of color temperature (0 warmest, 15 coldest)
 ```python
-bar.color(0)   # Warm white, 2700 K
-bar.color(8)   # Intermediate, cool white
-bar.color(15)  # Day light, 6500 K
+bar.color_temp(0)   # Warm white, 2700 K
+bar.color_temp(8)   # Intermediate, cool white
+bar.color_temp(15)  # Day light, 6500 K
 ```
 
 # Background
@@ -129,7 +130,10 @@ mouse (with clicks and wheels), while the bar is like the receiver you plug in a
 data transmission to any USB host.
 
 The control uses at least three 2 MHz channels centered at 2406 MHz, 2043 MHz and 2068 MHz. It uses
-a rather aggresive frequency-hopping scheme ([thanks, Hedy](https://en.wikipedia.org/wiki/Hedy_Lamarr#Inventor)). Each command is sent as a burst of ten 100 µs identical pulses, repeated each 1300 µs. The time between pulses is used to transmit the same burst in the other channels. A full burst captured by the SDR is shown here.
+a rather aggresive frequency-hopping scheme ([thanks, Hedy](https://en.wikipedia.org/wiki/Hedy_Lamarr#Inventor)). 
+Each command is sent as a burst of ten 100 µs identical pulses, repeated each 1300 µs. 
+The time between pulses is used to transmit the same burst in the other channels. 
+A full burst captured by the SDR is shown here.
 
 ![Burst of RF pulses](./pics/xiaomi_lightbar_rf_burst.png) 
 
@@ -140,7 +144,9 @@ the time):
 ![Demodulated FSK pulse](./pics/xiaomi_lightbar_demodulated_pulse.png) 
 
 The bit rate is 2 Mbps, and therefore the bit length is 0.5 µs. Each pulse contains a packet of 17
-bytes, or 136 bits, equal to 68 µs. The remaining time up to 100 µs corresponds to a synchronization sequence before the bits, to allow the receiver to lock into the signal frequency. I suspect that the wavy shape of the frequency plot during the sync sequence is meant to help the locking process.
+bytes, or 136 bits, equal to 68 µs. The remaining time up to 100 µs corresponds to a synchronization 
+sequence before the bits, to allow the receiver to lock into the signal frequency. 
+I suspect that the wavy shape of the frequency plot during the sync sequence is meant to help the locking process.
 
 ## Baseband packet format
 
@@ -187,10 +193,10 @@ The command codes that work are the ones in the following table:
 - Steps is a number from 1 to 15. 
 - Default is the code sent by the original control.
 - Wrong codes (e.g. `0x0800`) are silently ignored.
-- The intensity and color scales are 0 to 15.
-- Steps higher than 15 saturate the intensity or color, but they are not immediately
-  applied. Instead, they wait for the next update. This can be used to fix an absolute
-  value of intensity or color, without flicker.
+- The brightness and color temperature scales are 0 to 15.
+- Steps higher than 15 saturate the brightness or color temperature, but they are not immediately
+  applied. Instead, they wait for the next update. This can be used to fix an absolute value of
+  brightness or color temperature, without flicker.
 
 
 ## CRC checksum
