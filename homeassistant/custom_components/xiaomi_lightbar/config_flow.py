@@ -1,4 +1,4 @@
-"""Config flow for Xiaomi Monitor Light Bar integration."""
+"""Config flow for Xiaomi Mi Computer Monitor Light Bar integration."""
 
 from typing import Any
 import logging
@@ -51,7 +51,7 @@ async def validate_input(hass: HomeAssistant,
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Xiaomi Monitor Light Bar."""
+    """Handle a config flow for Xiaomi Mi Computer Monitor Light Bar."""
 
     VERSION = 1
 

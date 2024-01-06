@@ -1,4 +1,4 @@
-"""Constants for the Xiaomi Monitor Light Bar integration."""
+"""Constants for the Xiaomi Mi Computer Monitor Light Bar integration."""
 
 DOMAIN = "xiaomi_lightbar"
 

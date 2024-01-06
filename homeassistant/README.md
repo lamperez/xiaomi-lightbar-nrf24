@@ -1,4 +1,4 @@
-Custom integration for the Xiaomi Monitor Light Bar controlled with a low-cost nRF24L01(+) wireless transceiver.
+Custom integration for the Xiaomi Mi Computer Monitor Light Bar controlled with a low-cost nRF24L01(+) wireless transceiver.
 
 To download, do for example
 

@@ -1,5 +1,5 @@
 {
-  "name": "Xiaomi Monitor Light Bar",
+  "name": "Xiaomi Mi Computer Monitor Light Bar",
   "domain": "xiaomi_lightbar",
   "codeowners": [ "@lamperez" ],
   "config_flow": true,

@@ -1,4 +1,4 @@
-"""The Xiaomi Monitor Light Bar integration."""
+"""Xiaomi Mi Computer Monitor Light Bar integration."""
 
 import logging
 
@@ -14,7 +14,7 @@ PLATFORMS: list[Platform] = [Platform.LIGHT]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Xiaomi Monitor Light Bar from a config entry."""
+    """Set up Xiaomi Mi Computer Monitor Light Bar from a config entry."""
 
     hass.data[DOMAIN] = entry.data
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
