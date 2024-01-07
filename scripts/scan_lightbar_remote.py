@@ -37,14 +37,14 @@ crc16_config = crc.Configuration(
 crc16 = crc.Calculator(crc16_config)
 
 
-def strip_bits(num, msb, lsb):
+def strip_bits(num: int, msb: int, lsb: int):
     """Strip msb and lsb bits of an int"""
     
     mask = (1 << num.bit_length()-msb)-1
     return (num & mask) >> lsb
 
 
-def decode_packet(raw):
+def decode_packet(raw: bytes):
     """Decode a received packet
 
     I captured 12 bytes = 96 bits, but:
@@ -67,7 +67,7 @@ def decode_packet(raw):
     return packet
 
 
-def good_packet(packet):
+def good_packet(packet: int):
     """Check the CRC of a packet"""
     
     x = preamble.to_bytes(8, 'big')
@@ -78,7 +78,7 @@ def good_packet(packet):
     return packet["crc"] == crc16.checksum(x)
 
 
-def print_packet(packet):
+def print_packet(packet: int):
     if good_packet(packet):
         print("Decoded packet, CRC ok")
     else:
