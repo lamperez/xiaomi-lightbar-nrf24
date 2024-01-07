@@ -59,10 +59,6 @@ class MyLight(LightEntity):
         _LOGGER.debug("MyLight constructor (%s %s %s)",
                       ce_pin, cs_pin, device_id)
 
-        # ColorMode.BRIGHTNESS
-        # self._attr_is_on = False
-        # self._name = "hola_mondo"
-
     @property
     def unique_id(self):
         return f"{self._device.id:0{6}x}"
