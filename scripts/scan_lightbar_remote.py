@@ -38,21 +38,38 @@ crc16 = crc.Calculator(crc16_config)
 
 
 def strip_bits(num, msb, lsb):
+    """Strip msb and lsb bits of an int"""
+    
     mask = (1 << num.bit_length()-msb)-1
     return (num & mask) >> lsb
 
 
 def decode_packet(raw):
+    """Decode a received packet
+
+    I captured 12 bytes = 96 bits, but:
+    - The first 15 bits (MSB) are the preamble trailing ones.
+      Remember that the 24 LSB from the preamble were included in the captured packet.
+      Where the other 9 bits are gone, I do not know. Maybe the ether monster ate them.
+    - 9 bytes = 72 bits are the good ones, the payload.
+    - The remaining 9 bits (LSB) are junk.
+    """ 
+
+    # Strip the preamble and junk bits
     raw_int = int.from_bytes(raw, "big")
-    data = strip_bits(raw_int, 15, 9)  # 3 bytes, but magic numbers otherwise
+    data = strip_bits(raw_int, 15, 9)
+    
+    # Now, the payload is clean and ready to be decoded
     keys = ["id", "separator", "counter", "command", "crc"]
-    values = unpack('>3s s s 2s 2s', data.to_bytes(9, 'big'))  # 12-3=9
+    values = unpack('>3s s s 2s 2s', data.to_bytes(9, 'big'))
     values = (int.from_bytes(x, "big") for x in values)
     packet = dict(zip(keys, values))
     return packet
 
 
 def good_packet(packet):
+    """Check the CRC of a packet"""
+    
     x = preamble.to_bytes(8, 'big')
     x += packet["id"].to_bytes(3, 'big')
     x += packet["separator"].to_bytes(1, 'big')
@@ -70,7 +87,7 @@ def print_packet(packet):
         print(f"• {k}: {hex(v)}")
 
 
-preamble = 0x533914DD1C493412
+preamble = 0x533914DD1C493412  # 8 bytes
 
 radio = pyrf24.RF24()
 if not radio.begin(CE_PIN, CS_PIN):
@@ -82,7 +99,7 @@ radio.crc_length = pyrf24.RF24_CRC_DISABLED
 radio.payload_size = 12  # More than necessary, I will strip some bits
 radio.address_width = 5
 radio.listen = True
-radio.open_rx_pipe(1, preamble >> 24)  # 5 bytes, I remove 3 lsb
+radio.open_rx_pipe(1, preamble >> 24)  # 5 first bytes of preable
 radio.print_details()
 
 while True:
