@@ -20,7 +20,7 @@ from .const import (DOMAIN, DEVICE_ID, CE_PIN, CS_PIN)
 _LOGGER = logging.getLogger(__name__)
 
 BRIGHTNESS_SCALE = (0, 15)
-TEMP_SCALE = (0, 15)
+COLOR_TEMP_SCALE = (0, 15)
 KELVIN_SCALE = (2700, 6500)
 
 
@@ -78,13 +78,15 @@ class LightbarEntity(LightEntity):
 
         if ATTR_BRIGHTNESS in kwargs:
             brightness = kwargs[ATTR_BRIGHTNESS]
+            self._attr_brightness = brightness
             val = scale_to_ranged_value((0, 255), BRIGHTNESS_SCALE, brightness)
             self._device.brightness(int(val))
             _LOGGER.debug("Brightness %s", val)
 
         if ATTR_COLOR_TEMP_KELVIN in kwargs:
             kelvin = kwargs[ATTR_COLOR_TEMP_KELVIN]
-            val = scale_to_ranged_value(KELVIN_SCALE, TEMP_SCALE, kelvin)
+            self._attr_color_temp_kelvin = kelvin
+            val = scale_to_ranged_value(KELVIN_SCALE, COLOR_TEMP_SCALE, kelvin)
             self._device.color_temp(int(val))
             _LOGGER.debug("Kelvin %s", val)
 
