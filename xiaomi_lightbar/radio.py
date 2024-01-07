@@ -23,6 +23,8 @@ class Lightbar:
         self.radio.data_rate = pyrf24.RF24_2MBPS
         self.radio.set_retries(0, 0)  # no repetitions, done manually in method send
         self.radio.listen = False
+        self.radio.dynamic_payloads = False
+        self.radio.payload_size = 17
         self.radio.open_tx_pipe(bytes(5*[0x55]))  # Address, really sync sequence
         self.repetitions = 20
         self.delay_s = 0.01
