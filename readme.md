@@ -143,6 +143,10 @@ A full burst captured by the SDR is shown here.
 
 ![Burst of RF pulses](./pics/xiaomi_lightbar_rf_burst.png) 
 
+Here you can see not only the burst of ten pulses, but also what is leaked from other
+channel in the frequency-hopping scheme (the small ten pulses before the main ones), and other
+pulses of unrelated 2.4 GHz devices.
+
 The modulation of the pulses is a simple FSK, with a frequency deviation of ±500 MHz. Below, a
 demodulated pulse is shown (that is, the graph is the instant frequency of the signal in terms of
 the time):
