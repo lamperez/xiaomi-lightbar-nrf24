@@ -34,11 +34,11 @@ async def async_setup_entry(
     data = hass.data[DOMAIN]
     _LOGGER.debug("Setting up lights %s", data)
 
-    entities = [MyLight(data[CE_PIN], data[CS_PIN], data[DEVICE_ID])]
+    entities = [LightbarEntity(data[CE_PIN], data[CS_PIN], data[DEVICE_ID])]
     async_add_entities(entities)
 
 
-class MyLight(LightEntity):
+class LightbarEntity(LightEntity):
 
     def __init__(self, ce_pin: int, cs_pin: int, device_id: int):
         """Initialize the state variable"""
@@ -56,7 +56,7 @@ class MyLight(LightEntity):
         else:
             self._device = DummyBar(ce_pin, cs_pin, device_id)
 
-        _LOGGER.debug("MyLight constructor (%s %s %s)",
+        _LOGGER.debug("LightbarEntity constructor (%s %s %s)",
                       ce_pin, cs_pin, device_id)
 
     @property
