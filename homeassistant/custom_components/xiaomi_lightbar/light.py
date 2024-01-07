@@ -63,13 +63,6 @@ class LightbarEntity(LightEntity):
     def unique_id(self):
         return f"{self._device.id:0{6}x}"
 
-    @property
-    def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self.unique_id)},
-            # "name": self._name
-        }
-
     def turn_on(self, **kwargs):
         _LOGGER.debug("Turning on %s", kwargs)
         if not self.is_on:
