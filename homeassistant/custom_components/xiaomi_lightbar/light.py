@@ -53,8 +53,8 @@ class LightbarEntity(LightEntity):
                 self._device = Lightbar(ce_pin, cs_pin, device_id)
             except RuntimeError:
                 raise CannotConnect
-        else:
-            self._device = DummyBar(ce_pin, cs_pin, device_id)
+        else:  # Just for debugging
+            self._device = DummyLightbar(ce_pin, cs_pin, device_id)
 
         _LOGGER.debug("LightbarEntity constructor (%s %s %s)",
                       ce_pin, cs_pin, device_id)
@@ -99,7 +99,9 @@ class CannotConnect(HomeAssistantError):
     """Error to indicate device is not responding."""
 
 
-class DummyBar(Lightbar):
+class DummyLightbar(Lightbar):
+    """A Lightbar that does nothing"""
+    
     def __init__(self, ce_pin, cs_pin, device_id):
         self.counter = 0
         self.repetitions = 0
