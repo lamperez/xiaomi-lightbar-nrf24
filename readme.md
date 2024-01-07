@@ -1,19 +1,25 @@
-Control a [Xiaomi My Computer Light Bar](https://www.mi.com/global/product/mi-computer-monitor-light-bar/) MJGJD01YL, using a cheap 2.4 GHz radio transceiver module (nRF24L01 or nRF24L01+).
+Control a 
+[Xiaomi My Computer Monitor Light Bar](https://www.mi.com/global/product/mi-computer-monitor-light-bar/)
+MJGJD01YL, using a cheap 2.4 GHz radio transceiver module (nRF24L01 or nRF24L01+).
 
 > [!IMPORTANT]
 > There are two variants of the light bar, both of them controlled by 2.4 GHz radio signals (see the
 > label on the bar for the device number).
-> - Device number MJGJD01YL. It uses a TLSR8368 radio receiver and a propiertary radio format. This is
+> - Device number MJGJD01YL. It uses a TLSR8368 radio receiver and a proprietary radio format. This is
 > the one that can be used with this library.
-> - Device number MJGJD02YL. It uses a ESP32, wifi and BTLE, and requires a phone app to pair. See 
-> [here](https://karlquinsland.com/xaomi-s1-monitor-lamp-teardown-and-tasmota) for many details.
+> - Device number MJGJD02YL. It uses a ESP32 and BLE (and even wifi, during the pairing process). See
+> [here](https://community.home-assistant.io/t/support-for-xiaomi-mijia-1s-light-bar-mjgjd02yl-in-xiaomi-miio-integration/382276)
+> or [here](https://karlquinsland.com/xaomi-s1-monitor-lamp-teardown-and-tasmota) for many details
+> on how to use it with Home Assistant.
 
-This library is inspired and based by [this thread](https://community.home-assistant.io/t/xiaomi-monitor-light-bar/298796/4) from the Home Assistant community forum. 
-My objective is to control the light bar from a Raspberry Pi where Home Assistant is already running.
+This library is inspired and based by 
+[this thread](https://community.home-assistant.io/t/xiaomi-monitor-light-bar/298796/4) from the
+Home Assistant community forum. My objective is to control the light bar from a Raspberry Pi where
+Home Assistant is already running in a Docker container.
 
 # Requirements
 
-- Xiaomi My Computer Light Bar, model MJGJD01YL.
+- Xiaomi My Computer Monitor Light Bar, model MJGJD01YL (without BLE or app)
 - Raspberry Pi, or any other device running Linux with GPIOs and a SPI controller, and Python 3.
 - nRF24L01(+) module.
 
@@ -130,7 +136,7 @@ mouse (with clicks and wheels), while the bar is like the receiver you plug in a
 data transmission to any USB host.
 
 The control uses at least three 2 MHz channels centered at 2406 MHz, 2043 MHz and 2068 MHz. It uses
-a rather aggresive frequency-hopping scheme ([thanks, Hedy](https://en.wikipedia.org/wiki/Hedy_Lamarr#Inventor)). 
+a rather aggressive frequency-hopping scheme ([thanks, Hedy](https://en.wikipedia.org/wiki/Hedy_Lamarr#Inventor)). 
 Each command is sent as a burst of ten 100 µs identical pulses, repeated each 1300 µs. 
 The time between pulses is used to transmit the same burst in the other channels. 
 A full burst captured by the SDR is shown here.
@@ -159,12 +165,13 @@ A baseband packet (17 bytes) is composed of the following fields
 - CRC16 checksum (2 bytes)
 
 This structure is compatible with the 
-[Telink baseband packet format](http://wiki.telink-semi.cn/doc/ds/DS_TLSR8368-E_Datasheet%20for%20Telink%202.4GHz%20RF%20System-On-Chip%20Solution%20TLSR8368.pdf#page=39), used by the TLSR8368 chip 
+[Telink baseband packet format](http://wiki.telink-semi.cn/doc/ds/DS_TLSR8368-E_Datasheet%20for%20Telink%202.4GHz%20RF%20System-On-Chip%20Solution%20TLSR8368.pdf#page=39), 
+used by the TLSR8368 chip 
 
 Before the packet, a synchronization sequence `0x5555555555` is transmitted (in binary it is just
 `0b010101...` ). Notice that the four first bits in the preamble are
 `0b0101 = 0x5`, they could be considered still part of the sync sequence. Doing so, the preamble
-becames `0x67229ba38926824`. However, this is clearly not a valid approach
+becomes `0x67229ba38926824`. However, this is clearly not a valid approach
 - The `0x67...` preamble is 60 bits long, 7 bytes and a half.
 - The byte alignment of the other packet fields is broken.
 - There are 4 trailing zero bits in all the captured packets.
@@ -190,13 +197,14 @@ The command codes that work are the ones in the following table:
 | lower   | 0x0500 - steps | 0x0600 - steps | 0x05FF  |
 | reset   | 0x06??         | 0x07??         | 0x0600  |
 
-- Steps is a number from 1 to 15. 
-- Default is the code sent by the original control.
+- `steps` is a number from 1 to 15. It encodes the turning speed of the wheel.
+- The default codes are the ones sent by the original control (low turning speed).
 - Wrong codes (e.g. `0x0800`) are silently ignored.
-- The brightness and color temperature scales are 0 to 15.
-- Steps higher than 15 saturate the brightness or color temperature, but they are not immediately
-  applied. Instead, they wait for the next update. This can be used to fix an absolute value of
-  brightness or color temperature, without flicker.
+- The brightness and color temperature scales are from 0 up to 15 (16 states)
+- Steps higher than 15 saturate the brightness or color temperature to its min/max value, 
+  but they are not immediately applied. Instead, the bar waits for the next update in the opposite
+  direction. This can be used to fix an absolute value of brightness or color temperature, without
+  flicker: saturate to the minimum, and then increase to the desired level.
 
 
 ## CRC checksum
@@ -217,9 +225,31 @@ reveng -w 16 -s 533914DD1C49341201B960FF7901003870 \
 width=16  poly=0x1021  init=0xfffe  refin=false  refout=false  xorout=0x0000
 check=0x6e62 residue=0x0000  name=(none)
 ```
-The validity of the checksum can be tested by changing the packets. THe parameters of the CRC
+The validity of the checksum can be tested by changing the packets. The parameters of the CRC
 checksum should be the same in all cases.
 
 # Signal generation with the nRF24L01(+)
 
-**TODO**
+Both the baseband format and the radio signals are completely known. New valid packets can be
+generated, and spoofed using a SDR (the HackRF, for example). However, the objective is a low cost
+solution that can be permanently integrated into the Raspberry Pi or a similar device. The nRF24L01
+or nRF24L01+ enters the scene.
+
+The RF signals generated by the nRF24L01 are almost compatible with the Telink chipset inside the
+Lightbar:
+- 126 RF channels, covering the full 2.4 GHz IMS band (including 2406 MHz, 2043 MHz and 2068 MHz).
+- Bitrate: 2 Mbps
+- GFSK (Gaussian frequency shift keying), instead of plain FSK that the original signals seem to
+use.
+- Similar synchronization preamble (high-low transitions, `0b010101...`).
+
+The `pyrf24` provides a closed solution for radio links between nRF24L01 devices, but the protocol
+can be deactivated, giving almost full control over the radio signals. For example, a 2 to 5 long
+address is mandatory, that constitute the leading bytes of each packet. This address is not
+compatible with the Lightbar one (8 bytes), but it can be just filled with the sync sequence
+(although after some tests I think that it is not necessary, any bit sequence works).
+
+This is one of the spoofed pulses, captured and demodulated as before. Compare with the original
+pulse shown above.
+
+![Demodulated FSK spoofed pulse](./pics/xiaomi_lightbar_demodulated_spoofed_pulse.png) 
