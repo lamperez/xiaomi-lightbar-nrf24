@@ -15,13 +15,12 @@ from homeassistant.components.light import (
 
 from xiaomi_lightbar import Lightbar
 
-from .const import (DOMAIN, DEVICE_ID, CE_PIN, CS_PIN)
+from .const import (
+    DOMAIN, DEVICE_ID, CE_PIN, CS_PIN,
+    BRIGHTNESS_SCALE, COLOR_TEMP_SCALE, KELVIN_SCALE
+)
 
 _LOGGER = logging.getLogger(__name__)
-
-BRIGHTNESS_SCALE = (0, 15)
-COLOR_TEMP_SCALE = (0, 15)
-KELVIN_SCALE = (2700, 6500)
 
 
 async def async_setup_entry(
