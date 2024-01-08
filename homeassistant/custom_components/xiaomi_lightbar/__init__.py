@@ -15,7 +15,10 @@ PLATFORMS: list[Platform] = [Platform.LIGHT]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Xiaomi Mi Computer Monitor Light Bar from a config entry."""
-    hass.data[DOMAIN] = entry.data
+    _LOGGER.debug("entry: %s", entry.entry_id)
+
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][entry.entry_id] = entry.data
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -25,7 +28,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok := await hass.config_entries.async_unload_platforms(
         entry, PLATFORMS
     ):
-        del hass.data[DOMAIN]
+        hass.data[DOMAIN].pop(entry.entry_id, None)
     return unload_ok
 
 

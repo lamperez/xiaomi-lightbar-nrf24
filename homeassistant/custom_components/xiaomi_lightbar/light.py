@@ -31,7 +31,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up entry."""
 
-    data = hass.data[DOMAIN]
+    data = hass.data[DOMAIN][entry.entry_id]
     _LOGGER.debug("Setting up lights %s", data)
 
     entities = [LightbarEntity(data[CE_PIN], data[CS_PIN], data[DEVICE_ID])]
