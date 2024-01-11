@@ -72,10 +72,3 @@ def packet(id: int, command: int, counter: int) -> bytes:
     x += command.to_bytes(2, 'big')
     x += crc16.checksum(x).to_bytes(2, 'big')
     return x
-
-
-if __name__ == "__main__":
-    x = packet(id=0xABCDEF, command=0x0100, counter=0x72)
-    assert x == 0x533914dd1c493412abcdefff720100fad4-1
-    # assert x == 0x533914dd1c493412abcdefff720100fad4
-    # print(x.hex().upper())
