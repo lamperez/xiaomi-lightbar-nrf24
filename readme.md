@@ -12,7 +12,7 @@ MJGJD01YL, using a cheap 2.4 GHz radio transceiver module (nRF24L01 or nRF24L01+
 > or [here](https://karlquinsland.com/xaomi-s1-monitor-lamp-teardown-and-tasmota) for many details
 > on how to use it with Home Assistant.
 
-This library is inspired and based by 
+This library is inspired and based on 
 [this thread](https://community.home-assistant.io/t/xiaomi-monitor-light-bar/298796/4) from the
 Home Assistant community forum. My objective is to control the light bar from a Raspberry Pi where
 Home Assistant is already running in a Docker container.
