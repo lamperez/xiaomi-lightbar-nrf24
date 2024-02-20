@@ -71,7 +71,7 @@ bar.on_off()
 Notice that there is no on or off command, since both are the same for the original controller.
 
 The id of the remote can be extracted using the [script](scripts/scan_lightbar_remote.py) provided in 
-the `scripts/` folder.
+the `scripts/` folder. Alternatively, see below to use an arbitrary id.
 
 The library uses an internal counter that is incremented on each call, required by the bar to
 reject repeated consecutive packets (the radio interface has a lot of redundancy). You can use your
@@ -120,6 +120,21 @@ bar.color_temp(0)   # Warm white, 2700 K
 bar.color_temp(8)   # Intermediate, cool white
 bar.color_temp(15)  # Day light, 6500 K
 ```
+
+## Controlling the bar with an arbitrary id
+
+If you cannot/do not want to capture your remote id, you can reprogram the bar with an arbitrary one. According to the manual, you can use one remote with several bars, reprogramming them. Just unplug and plug the bar, and within 20 seconds long press the remote. The bar will briefly flash.
+
+We can do the same thing with the library. Choose an arbitrary id,
+```
+bar = Lightbar(25, 0, 0x111111)
+```
+unplug and plug the bar, and within 20 seconds run
+```
+bar.reset()
+```
+Of course, now the remote will not work. You can undo everything by reprogramming the bar again (with the remote or the library).
+
 
 # Background
 
