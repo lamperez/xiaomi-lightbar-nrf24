@@ -18,7 +18,7 @@ class Lightbar:
         self.radio = pyrf24.RF24()
         if not self.radio.begin(ce_pin, csn_pin):
             raise OSError("nRF24L01 hardware is not responding")
-        self.radio.channel = 6  # 6, 43, 68 (or +1) -> 2406 MHz, 2043 MHz, 2068 MHz
+        self.radio.channel = 6  # 6, 15, 43, 68 (or +1) -> 2406 MHz, 2015 MHz, 2043 MHz, 2068 MHz
         self.radio.pa_level = pyrf24.RF24_PA_LOW
         self.radio.data_rate = pyrf24.RF24_2MBPS
         self.radio.set_retries(0, 0)  # no repetitions, done manually in method send
