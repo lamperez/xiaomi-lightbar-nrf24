@@ -126,11 +126,11 @@ bar.color_temp(15)  # Day light, 6500 K
 If you cannot/do not want to capture your remote id, you can reprogram the bar with an arbitrary one. According to the manual, you can use one remote with several bars, reprogramming them. Just unplug and plug the bar, and within 20 seconds long press the remote. The bar will briefly flash.
 
 We can do the same thing with the library. Choose an arbitrary id,
-```
+```python
 bar = Lightbar(25, 0, 0x111111)
 ```
 unplug and plug the bar, and within 20 seconds run
-```
+```python
 bar.reset()
 ```
 Of course, now the remote will not work. You can undo everything by reprogramming the bar again (with the remote or the library).
