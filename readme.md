@@ -93,7 +93,7 @@ The light bar remote has six operations:
 Therefore, the full list of commands is 
 ```python
 bar.on_off()  # Turn on or off
-bar.colder()  # Colder/bluer color
+bar.cooler()  # Cooler/bluer color
 bar.warmer()  # Warmer/yellower color
 bar.higher()  # Higher brightness
 bar.lower()   # Lower brightness
@@ -103,7 +103,7 @@ The four turning operations also register the speed of change. Therefore, the fo
 optional numerical parameter, 1 to 15, that represent the change in each operation. The default value is 1, while 15 
 covers the full range of brightness or color temperature in just one operation.
 ```python
-bar.colder(15)
+bar.cooler(15)
 bar.warmer(3)
 bar.higher(5)
 bar.lower(4)
