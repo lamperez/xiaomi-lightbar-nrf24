@@ -13,10 +13,19 @@ class MqttController:
 
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.stop()
 
     def on_connect(self, client, userdata, flags, rc, properties):
-        print(f"Connected with result code {rc}")
-        client.subscribe(self.topic)
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+            client.subscribe(self.topic)
+        else:
+            print("Failed to connect, return code %d\n", rc)
+            self.stop()
 
     def on_message(self, client, userdata, msg):
         print(f"{msg.topic} {msg.payload}")
@@ -42,8 +51,11 @@ class MqttController:
             self.lightbar.color_temp(scaled_val)
 
     def start(self):
-        self.client.connect(self.broker, self.port, 60)
-        self.client.loop_forever()
+        try:
+            self.client.connect(self.broker, self.port, 60)
+            self.client.loop_start()
+        except Exception as e:
+            print(f"Failed to connect to MQTT broker: {e}")
 
     def stop(self):
         self.client.loop_stop()
@@ -62,7 +74,23 @@ def scale_value(t):
         f_t = None
     return round(f_t) if f_t is not None else None
 
-# Usage
-lightbar = Lightbar(ce_pin=25, csn_pin=0, remote_id=0xa2c231)
-controller = MqttController("homeassistant.local", 1883,"mqtt_user", "password", "xiaomi/lightbar", lightbar)
-controller.start()
+# Constants for magic numbers and strings
+CE_PIN = 25
+CSN_PIN = 0
+REMOTE_ID = 0xa2c231
+BROKER = "homeassistant.local"
+PORT = 1883
+USERNAME = "mqtt_user"
+PASSWORD = "password"
+TOPIC = "xiaomi/lightbar"
+
+# Create Lightbar and MqttController instances
+lightbar = Lightbar(ce_pin=CE_PIN, csn_pin=CSN_PIN, remote_id=REMOTE_ID)
+
+try:
+    with MqttController(BROKER, PORT, USERNAME, PASSWORD, TOPIC, lightbar) as controller:
+        controller.start()
+        while True:  # Keep the program running
+            pass
+except KeyboardInterrupt:
+    print("Interrupted by user. Exiting...")
