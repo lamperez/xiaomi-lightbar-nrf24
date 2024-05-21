@@ -135,6 +135,40 @@ bar.reset()
 ```
 Of course, now the remote will not work. You can undo everything by reprogramming the bar again (with the remote or the library).
 
+# MQTT
+
+Copy the following to the configuration.yaml file in your homeassistant and restart.
+```python
+mqtt:
+  - light:
+      - name: "Xiaomi Lightbar"
+        command_topic: "xiaomi/lightbar/control"
+        payload_on: "ON"
+        payload_off: "OFF"
+        max_mireds: 370
+        min_mireds: 153
+        brightness_command_topic: "xiaomi/lightbar/brightness/set"
+        color_temp_command_topic: "xiaomi/lightbar/temperature/set"
+        brightness_value_template: "{{ value_json.brightness }}"
+        color_temp_value_template: "{{ value_json.temp }}"
+```
+
+To use the MQTT subscriber, you need to run the `subscriber.py` script with the appropriate arguments.
+- Put correct broker, and port details
+- If your mqtt broker has no password then keep username and password empty.
+- Keep topic, ce_pin and csn_pin unchanged unless necessary
+- Make sure you put your correct remote ID. 
+```sh  
+  --broker BROKER       MQTT Broker
+  --port PORT           MQTT Port
+  --username USERNAME   MQTT Username
+  --password PASSWORD   MQTT Password
+  --topic TOPIC         MQTT Topic
+  --ce_pin CE_PIN       CE Pin
+  --csn_pin CSN_PIN     CSN Pin
+  --remote_id REMOTE_ID Remote ID
+```
+If everything is done correctly you should be able to see and a light entity named xaiomi_lightbar. With this you can control your light bar from Home Assistant.
 
 # Background
 
