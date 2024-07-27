@@ -37,15 +37,14 @@ See [here](https://nrf24.github.io/RF24/md_docs_rpi_general.html) for the gory d
 
 ## Dependencies
 
-- `pyrf24` [RF24 python library](https://nrf24.github.io/RF24)
+- `pyrf24` [pyRF24 python library](https://nrf24.github.io/pyRF24)
 - `crc` [CRC python library](https://github.com/Nicoretti/crc)
 
-Notice that `pyrf24` may need to build some dynamic libraries. So, you will need some additional
-packages:
+Notice that `pyrf24` may need to build from source on some systems. In such case, you will need cmake and python headers (python3-dev) installed.
 
 - Debian based OS (e.g. Raspberry Pi OS)
 ```sh
-  sudo apt-get install python3-dev libboost-python-dev
+  sudo apt-get install python3-dev cmake
   python -m pip install pyrf24
 
 ```
