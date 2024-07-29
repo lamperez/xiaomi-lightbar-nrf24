@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 from xiaomi_lightbar import Lightbar
 import argparse
+import time
 
 description = """
     MQTT subscriber for Xiaomi Lightbar Home Assistant MQTT Light integration.
@@ -113,6 +114,7 @@ def main():
         with MqttController(BROKER, PORT, USERNAME, PASSWORD, TOPIC, lightbar) as controller:
             controller.start()
             while True:  # Keep the program running
+                time.sleep(0.1)
                 pass
     except KeyboardInterrupt:
         print("\nInterrupted by user. Exiting...")
