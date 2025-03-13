@@ -10,7 +10,7 @@ import pyrf24
 
 
 description = """
-    Script to capture and analyze a packet of the original remote for the Xiaomi Mi Computer Monitor Lightbar (non-BLE version), 
+    Script to capture and analyze a packet of the original remote for the Xiaomi Mi Computer Monitor Lightbar (non-BLE version),
     using a nRF24L01 transceiver connected to a Raspberry Pi.
 
     - See https://github.com/lamperez/xiaomi-lightbar-nrf24/blob/main/readme.md for the dependencies and installation.
@@ -18,7 +18,7 @@ description = """
     - Run the script.
     - Put the remote close to the nRF24L01 and operate it, turning the knob.
 
-    The script will dump detected packets. Choose a packet with correct crc. Most of the packets are not detected, so you may need 
+    The script will dump detected packets. Choose a packet with correct crc. Most of the packets are not detected, so you may need
     to try long enough to capture at least one correct packet to obtain the device ID of the remote. You may also change CHANNEL to
     6, 15, 43 or 68 (or even 7, 16, 44 or 69) to try to increase the detection rate.
 """
@@ -55,10 +55,10 @@ crc16_config = crc.Configuration(
 crc16 = crc.Calculator(crc16_config)
 
 
-def strip_bits(num: int, msb: int, lsb: int):
+def strip_bits(num: int, msb: int, lsb: int, bit_count = 96):
     """Strip msb and lsb bits of an int"""
-    
-    mask = (1 << num.bit_length()-msb)-1
+
+    mask = (1 << bit_count - msb) - 1
     return (num & mask) >> lsb
 
 
@@ -66,17 +66,14 @@ def decode_packet(raw: bytes):
     """Decode a received packet
 
     I captured 12 bytes = 96 bits, but:
-    - The first 15 bits (MSB) are the preamble trailing ones.
-      Remember that the 24 LSB from the preamble were included in the captured packet.
-      Where the other 9 bits are gone, I do not know. Maybe the ether monster ate them.
-    - 9 bytes = 72 bits are the good ones, the payload.
-    - The remaining 9 bits (LSB) are junk.
-    """ 
+    - The first 24 LSB from the preamble were included in the captured packet.
+    = 72 bits are the good ones, the payload.
+    """
 
     # Strip the preamble and junk bits
     raw_int = int.from_bytes(raw, "big")
-    data = strip_bits(raw_int, 15, 9)
-    
+    data = strip_bits(raw_int, 24, 0)
+
     # Now, the payload is clean and ready to be decoded
     keys = ["id", "separator", "counter", "command", "crc"]
     values = unpack('>3s s s 2s 2s', data.to_bytes(9, 'big'))
@@ -87,7 +84,7 @@ def decode_packet(raw: bytes):
 
 def good_packet(packet: int):
     """Check the CRC of a packet"""
-    
+
     x = preamble.to_bytes(8, 'big')
     x += packet["id"].to_bytes(3, 'big')
     x += packet["separator"].to_bytes(1, 'big')
@@ -115,8 +112,9 @@ radio.pa_level = POW
 radio.data_rate = pyrf24.RF24_2MBPS
 radio.dynamic_payloads = False
 radio.crc_length = pyrf24.RF24_CRC_DISABLED
-radio.payload_size = 12  # More than necessary, I will strip some bits
+radio.payload_size = 12
 radio.address_width = 5
+radio.set_auto_ack(False)
 radio.listen = True
 radio.open_rx_pipe(1, preamble >> 24)  # 5 first bytes of preable
 radio.print_details()
